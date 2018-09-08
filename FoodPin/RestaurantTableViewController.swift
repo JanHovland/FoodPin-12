@@ -23,6 +23,7 @@ class RestaurantTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.cellLayoutMarginsFollowReadableWidth = true
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -59,54 +60,54 @@ class RestaurantTableViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Create an option menu as an action sheet
-        let optionMenu = UIAlertController(title: nil, message: "What do you want to do?", preferredStyle: .actionSheet)
-        
-        // Add actions to the menu
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        optionMenu.addAction(cancelAction)
-        
-        if let popoverController = optionMenu.popoverPresentationController {
-            if let cell = tableView.cellForRow(at: indexPath) {
-                popoverController.sourceView = cell
-                popoverController.sourceRect = cell.bounds
-            }
-        }
-        
-        // Add call action
-        let callActionHandler = { (action: UIAlertAction!) -> Void in
-            let alertMessage = UIAlertController(title: "Service Unavailable", message: "Sorry, this call feature is not available yet. Please retry later.", preferredStyle: .alert)
-            alertMessage.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alertMessage, animated: true, completion: nil)
-        }
-        
-        let callAction = UIAlertAction(title: "Call " + "123-000-\(indexPath.row)", style: .default , handler: callActionHandler)
-        optionMenu.addAction(callAction)
-        
-        // Set accessoryType and update array
-        
-        let checkActionTitle = (restaurantIsVisited[indexPath.row]) ? "Undo Check in" : "Check in"
-        
-        let checkInAction = UIAlertAction(title: checkActionTitle, style: .default, handler: { (action: UIAlertAction!)  -> Void in
-            let cell = tableView.cellForRow(at: indexPath) as! RestaurantTableViewCell
-            
-            self.restaurantIsVisited[indexPath.row] = (self.restaurantIsVisited[indexPath.row]) ? false : true
-            // Use the isHidden property to control the appearance of the heart icon
-            
-            cell.heartImageView.isHidden = self.restaurantIsVisited[indexPath.row] ? false : true
-
-        })
-        
-        optionMenu.addAction(checkInAction)
-        
-        // Display the menu
-        present(optionMenu, animated: true, completion: nil)
- 
-        // Deselect the row, do not show the selected rom
-        tableView.deselectRow(at: indexPath, animated: false)
-        
-    }
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        // Create an option menu as an action sheet
+//        let optionMenu = UIAlertController(title: nil, message: "What do you want to do?", preferredStyle: .actionSheet)
+//        
+//        // Add actions to the menu
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        optionMenu.addAction(cancelAction)
+//        
+//        if let popoverController = optionMenu.popoverPresentationController {
+//            if let cell = tableView.cellForRow(at: indexPath) {
+//                popoverController.sourceView = cell
+//                popoverController.sourceRect = cell.bounds
+//            }
+//        }
+//        
+//        // Add call action
+//        let callActionHandler = { (action: UIAlertAction!) -> Void in
+//            let alertMessage = UIAlertController(title: "Service Unavailable", message: "Sorry, this call feature is not available yet. Please retry later.", preferredStyle: .alert)
+//            alertMessage.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//            self.present(alertMessage, animated: true, completion: nil)
+//        }
+//        
+//        let callAction = UIAlertAction(title: "Call " + "123-000-\(indexPath.row)", style: .default , handler: callActionHandler)
+//        optionMenu.addAction(callAction)
+//        
+//        // Set accessoryType and update array
+//        
+//        let checkActionTitle = (restaurantIsVisited[indexPath.row]) ? "Undo Check in" : "Check in"
+//        
+//        let checkInAction = UIAlertAction(title: checkActionTitle, style: .default, handler: { (action: UIAlertAction!)  -> Void in
+//            let cell = tableView.cellForRow(at: indexPath) as! RestaurantTableViewCell
+//            
+//            self.restaurantIsVisited[indexPath.row] = (self.restaurantIsVisited[indexPath.row]) ? false : true
+//            // Use the isHidden property to control the appearance of the heart icon
+//            
+//            cell.heartImageView.isHidden = self.restaurantIsVisited[indexPath.row] ? false : true
+//
+//        })
+//        
+//        optionMenu.addAction(checkInAction)
+//        
+//        // Display the menu
+//        present(optionMenu, animated: true, completion: nil)
+// 
+//        // Deselect the row, do not show the selected rom
+//        tableView.deselectRow(at: indexPath, animated: false)
+//        
+//    }
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -193,6 +194,15 @@ class RestaurantTableViewController: UITableViewController {
         
        return swipeConfiguration
         
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showRestaurantDetail" {
+            if let indexPath = tableView.indexPathForSelectedRow {
+               let destinationController = segue.destination as! RestaurantDetailViewController
+               destinationController.restaurantImageName = restaurantImages[indexPath.row]
+            }
+        }
     }
     
 }
